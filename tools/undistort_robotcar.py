@@ -1,9 +1,5 @@
 '''
-@Author: Huangying Zhan (huangying.zhan.work@gmail.com)
-@Date: 1970-01-01
-@Copyright: Copyright (C) Huangying Zhan 2020. All rights reserved. Please refer to the license file.
-@LastEditTime: 2020-07-02
-@LastEditors: Huangying Zhan
+
 @Description: This tool undistort Oxford Robotcar sequences
 '''
 

@@ -281,8 +281,16 @@ class DCPVO():
         """load image data and (optional) GT/precomputed depth data
         """
         # Reading image
-        self.cur_data['img'] = self.dataset.get_image(self.cur_data['timestamp'])
-
+        image = self.dataset.get_image(self.cur_data['timestamp'])
+        # self.cfg.image.width
+        #self.cur_data['img'] = image
+        centerw = 200
+        centerh = 100
+        centerx = int(image.shape[1] / 2 - centerw/2)
+        centery = int(image.shape[0] / 2 -centerh/2)
+        
+        self.cur_data['img_centr'] = image[centery:centery+centerh, centerx:centerx+centerw]
+        self.cur_data['img_peri'] =  cv2.resize(image, dsize=(100, 200), interpolation=cv2.INTER_LINEAR)
         # Reading/Predicting depth
         if self.dataset.data_dir['depth_src'] is not None:
             self.cur_data['raw_depth'] = self.dataset.get_depth(self.cur_data['timestamp'])
@@ -296,9 +304,9 @@ class DCPVO():
                 self.timers.start('depth_cnn', 'deep inference')
                 if self.tracking_stage > 0 and \
                     self.cfg.online_finetune.enable and self.cfg.online_finetune.depth.enable:
-                        img_list = [self.cur_data['img'], self.ref_data['img']]
+                        img_list = [self.cur_data['img_peri'], self.ref_data['img_peri']]
                 else:
-                    img_list = [self.cur_data['img']]
+                    img_list = [self.cur_data['img_peri']]
 
                 self.cur_data['raw_depth'] = \
                     self.deep_models.forward_depth(imgs=img_list)
@@ -372,7 +380,7 @@ class DCPVO():
 
             """ Online Finetuning """
             if self.tracking_stage >= 1 and self.cfg.online_finetune.enable:
-                self.deep_models.finetune(self.ref_data['img'], self.cur_data['img'],
+                self.deep_models.finetune(self.ref_data['img_peri'], self.cur_data['img_peri'],
                                       self.ref_data['pose'].pose,
                                       self.dataset.cam_intrinsics.mat,
                                       self.dataset.cam_intrinsics.inv_mat)

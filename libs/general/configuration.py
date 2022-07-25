@@ -1,10 +1,5 @@
 ''''''
 '''
-@Author: Huangying Zhan (huangying.zhan.work@gmail.com)
-@Date: 2020-05-19
-@Copyright: Copyright (C) Huangying Zhan 2020. All rights reserved. Please refer to the license file.
-@LastEditTime: 2020-05-20
-@LastEditors: Huangying Zhan
 @Description: ConfigLoader contains operations for processing multiple yml files
 '''
 

@@ -1,10 +1,5 @@
 ''''''
 '''
-@Author: Huangying Zhan (huangying.zhan.work@gmail.com)
-@Date: 2019-09-01
-@Copyright: Copyright (C) Huangying Zhan 2020. All rights reserved. Please refer to the license file.
-@LastEditTime: 2020-05-21
-@LastEditors: Huangying Zhan
 @Description: Timer object for counting times.
 '''
 

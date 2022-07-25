@@ -1,10 +1,6 @@
 ''''''
 '''
-@Author: Huangying Zhan (huangying.zhan.work@gmail.com)
-@Date: 2019-09-01
-@Copyright: Copyright (C) Huangying Zhan 2020. All rights reserved. Please refer to the license file.
-@LastEditTime: 2020-06-25
-@LastEditors: Huangying Zhan
+
 @Description: utils.py contains varies methods for general purpose
 '''
 
