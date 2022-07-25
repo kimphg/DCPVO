@@ -140,6 +140,30 @@ class DeepModel():
             self.pose.setup_train(self, self.finetune_cfg.pose)
         
         self.model_optimizer = optim.Adam(self.parameters_to_train, self.learning_rate)
+    def forward_flow_img(self, in_cur_img,in_ref_img, forward_backward):
+         # Preprocess image
+        cur_imgs = np.transpose((in_cur_img)/255, (2, 0, 1))
+        ref_imgs = np.transpose((in_ref_img)/255, (2, 0, 1))
+        cur_imgs = torch.from_numpy(cur_imgs).unsqueeze(0).float().cuda()
+        ref_imgs = torch.from_numpy(ref_imgs).unsqueeze(0).float().cuda()
+        # Forward pass
+        flows = {}
+
+        # Flow inference
+        batch_flows = self.flow.inference_flow(
+                                img1=ref_imgs,
+                                img2=cur_imgs,
+                                forward_backward=forward_backward,
+                                dataset=self.cfg.dataset)
+        
+        # Save flows at current view
+        src_id = in_ref_img['id']
+        tgt_id = in_cur_img['id']
+        flows[(src_id, tgt_id)] = batch_flows['forward'].detach().cpu().numpy()[0]
+        if forward_backward:
+            flows[(tgt_id, src_id)] = batch_flows['backward'].detach().cpu().numpy()[0]
+            flows[(src_id, tgt_id, "diff")] = batch_flows['flow_diff'].detach().cpu().numpy()[0]
+        return flows
 
     def forward_flow(self, in_cur_data, in_ref_data, forward_backward):
         """Optical flow network forward interface, a forward inference.
