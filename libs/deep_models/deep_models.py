@@ -63,14 +63,14 @@ class DeepModel():
             flow_net (nn.Module): optical flow network
         """
         if self.cfg.deep_flow.network == 'liteflow':
-            flow_net = LiteFlow(self.cfg.image.height, self.cfg.image.width)
+            flow_net = LiteFlow(self.cfg.image.height_peri , self.cfg.image.width_peri)
             enable_finetune = self.finetune_cfg.enable and self.finetune_cfg.flow.enable
             flow_net.initialize_network_model(
                     weight_path=self.cfg.deep_flow.flow_net_weight,
                     finetune=enable_finetune,
                     )
         elif self.cfg.deep_flow.network == 'hd3':
-            flow_net = HD3Flow(self.cfg.image.height, self.cfg.image.width)
+            flow_net = HD3Flow(self.cfg.image.height_peri, self.cfg.image.width_peri )
             enable_finetune = self.finetune_cfg.enable and self.finetune_cfg.flow.enable
             flow_net.initialize_network_model(
                     weight_path=self.cfg.deep_flow.flow_net_weight,
@@ -89,7 +89,7 @@ class DeepModel():
             depth_net (nn.Module): single-view depth network
         """
         if self.cfg.depth.deep_depth.network == 'monodepth2':
-            depth_net = Monodepth2DepthNet(self.cfg.image.height, self.cfg.image.width)
+            depth_net = Monodepth2DepthNet(self.cfg.image.height_peri, self.cfg.image.width_peri)
             enable_finetune = self.finetune_cfg.enable and self.finetune_cfg.depth.enable
             depth_net.initialize_network_model(
                     weight_path=self.cfg.depth.deep_depth.pretrained_model,
@@ -140,30 +140,52 @@ class DeepModel():
             self.pose.setup_train(self, self.finetune_cfg.pose)
         
         self.model_optimizer = optim.Adam(self.parameters_to_train, self.learning_rate)
-    def forward_flow_img(self, in_cur_img,in_ref_img, forward_backward):
+    def forward_flow_cp(self, in_cur_img,in_ref_img, forward_backward):
          # Preprocess image
-        cur_imgs = np.transpose((in_cur_img)/255, (2, 0, 1))
-        ref_imgs = np.transpose((in_ref_img)/255, (2, 0, 1))
-        cur_imgs = torch.from_numpy(cur_imgs).unsqueeze(0).float().cuda()
-        ref_imgs = torch.from_numpy(ref_imgs).unsqueeze(0).float().cuda()
+        cur_imgs_peri = np.transpose((in_cur_img['img_peri'])/255, (2, 0, 1))
+        ref_imgs_peri = np.transpose((in_ref_img['img_peri'])/255, (2, 0, 1))
+        cur_imgs_peri = torch.from_numpy(cur_imgs_peri).unsqueeze(0).float().cuda()
+        ref_imgs_peri = torch.from_numpy(ref_imgs_peri).unsqueeze(0).float().cuda()
         # Forward pass
-        flows = {}
+        flows_peri = {}
 
         # Flow inference
         batch_flows = self.flow.inference_flow(
-                                img1=ref_imgs,
-                                img2=cur_imgs,
+                                img1=ref_imgs_peri,
+                                img2=cur_imgs_peri,
                                 forward_backward=forward_backward,
                                 dataset=self.cfg.dataset)
         
         # Save flows at current view
         src_id = in_ref_img['id']
         tgt_id = in_cur_img['id']
-        flows[(src_id, tgt_id)] = batch_flows['forward'].detach().cpu().numpy()[0]
+        flows_peri[(src_id, tgt_id)] = batch_flows['forward'].detach().cpu().numpy()[0]
         if forward_backward:
-            flows[(tgt_id, src_id)] = batch_flows['backward'].detach().cpu().numpy()[0]
-            flows[(src_id, tgt_id, "diff")] = batch_flows['flow_diff'].detach().cpu().numpy()[0]
-        return flows
+            flows_peri[(tgt_id, src_id)] = batch_flows['backward'].detach().cpu().numpy()[0]
+            flows_peri[(src_id, tgt_id, "diff")] = batch_flows['flow_diff'].detach().cpu().numpy()[0]
+         # Preprocess image
+        cur_imgs_centr = np.transpose((in_cur_img['img_centr'])/255, (2, 0, 1))
+        ref_imgs_centr = np.transpose((in_ref_img['img_centr'])/255, (2, 0, 1))
+        cur_imgs_centr = torch.from_numpy(cur_imgs_centr).unsqueeze(0).float().cuda()
+        ref_imgs_centr = torch.from_numpy(ref_imgs_centr).unsqueeze(0).float().cuda()
+        # Forward pass
+        flows_centr = {}
+
+        # Flow inference
+        batch_flows = self.flow.inference_flow(
+                                img1=ref_imgs_centr,
+                                img2=cur_imgs_centr,
+                                forward_backward=forward_backward,
+                                dataset=self.cfg.dataset)
+        
+        # Save flows at current view
+        src_id = in_ref_img['id']
+        tgt_id = in_cur_img['id']
+        flows_centr[(src_id, tgt_id)] = batch_flows['forward'].detach().cpu().numpy()[0]
+        if forward_backward:
+            flows_centr[(tgt_id, src_id)] = batch_flows['backward'].detach().cpu().numpy()[0]
+            flows_centr[(src_id, tgt_id, "diff")] = batch_flows['flow_diff'].detach().cpu().numpy()[0]
+        return flows_centr,flows_peri
 
     def forward_flow(self, in_cur_data, in_ref_data, forward_backward):
         """Optical flow network forward interface, a forward inference.

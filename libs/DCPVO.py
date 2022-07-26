@@ -29,8 +29,8 @@ class DCPVO():
         """
         # configuration
         self.cfg = cfg
-        self.img_centr_w = 200
-        self.img_centr_h = 100
+        # self.img_centr_w = 200
+        # self.img_centr_h = 100
         # tracking stage
         self.tracking_stage = 0
 
@@ -312,7 +312,7 @@ class DCPVO():
                 self.cur_data['raw_depth'] = \
                     self.deep_models.forward_depth(imgs=img_list)
                 self.cur_data['raw_depth'] = cv2.resize(self.cur_data['raw_depth'],
-                                                    (self.img_centr_w, self.img_centr_h),
+                                                    (self.cfg.image.width_peri, self.cfg.image.height_peri),
                                                     interpolation=cv2.INTER_NEAREST
                                                     )
                 self.timers.end('depth_cnn')
@@ -321,22 +321,18 @@ class DCPVO():
             # Two-view flow
             if self.tracking_stage >= 1:
                 self.timers.start('flow_cnn', 'deep inference')
-                flows_peri = self.deep_models.forward_flow_img(
-                                        self.cur_data['img_peri'],
-                                        self.ref_data['img_peri'],
-                                        forward_backward=self.cfg.deep_flow.forward_backward)
-                flows_centr = self.deep_models.forward_flow_img(
-                                        self.cur_data['img_centr'],
-                                        self.ref_data['img_centr'],
+                flows_centr,flows_peri = self.deep_models.forward_flow_cp(
+                                        self.cur_data,
+                                        self.ref_data,
                                         forward_backward=self.cfg.deep_flow.forward_backward)
                 # Store flow
                 self.ref_data['flow_peri'] = flows_peri[(self.ref_data['id'], self.cur_data['id'])].copy()
-                self.ref_data['flows_centr'] = flows_centr[(self.ref_data['id'], self.cur_data['id'])].copy()
+                self.ref_data['flow_centr'] = flows_centr[(self.ref_data['id'], self.cur_data['id'])].copy()
                 if self.cfg.deep_flow.forward_backward:
                     self.cur_data['flow_peri'] = flows_peri[(self.cur_data['id'], self.ref_data['id'])].copy()
                     self.ref_data['flow_peri_diff'] = flows_peri[(self.ref_data['id'], self.cur_data['id'], "diff")].copy()
-                    self.cur_data['flows_centr'] = flows_peri[(self.cur_data['id'], self.ref_data['id'])].copy()
-                    self.ref_data['flows_centr_diff'] = flows_peri[(self.ref_data['id'], self.cur_data['id'], "diff")].copy()
+                    self.cur_data['flow_centr'] = flows_peri[(self.cur_data['id'], self.ref_data['id'])].copy()
+                    self.ref_data['flow_centr_diff'] = flows_peri[(self.ref_data['id'], self.cur_data['id'], "diff")].copy()
                 self.timers.end('flow_cnn')
             
         # Relative camera pose

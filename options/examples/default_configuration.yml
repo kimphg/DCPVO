@@ -9,6 +9,10 @@ seed: 4869                                                # random seed
 image:
     height: 300                                           # image height
     width: 1000                                            # image width
+    height_peri: 100
+    width_peri: 200
+    height_centr: 100
+    width_centr: 200
     ext: png                                              # image file extension for data loading
 seq: "09"                                                 # sequence to run
 frame_step: 1                                             # frame step
