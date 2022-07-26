@@ -179,8 +179,6 @@ class DeepModel():
                                 dataset=self.cfg.dataset)
         
         # Save flows at current view
-        src_id = in_ref_img['id']
-        tgt_id = in_cur_img['id']
         flows_centr[(src_id, tgt_id)] = batch_flows['forward'].detach().cpu().numpy()[0]
         if forward_backward:
             flows_centr[(tgt_id, src_id)] = batch_flows['backward'].detach().cpu().numpy()[0]

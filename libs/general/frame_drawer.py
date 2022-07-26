@@ -129,11 +129,11 @@ class FrameDrawer():
         # assign data to the layout
         drawer_layout = {
             'traj':             ([int(h/4*0), int(w/4*0)], [int(h/4*4), int(w/4*2)]),
-            'match_temp':       ([int(h/4*0), int(w/4*2)], [int(h/4*1), int(w/4*4)]),
-            'match_side':       ([int(h/4*1), int(w/4*2)], [int(h/4*2), int(w/4*4)]),
+            'img_peri':         ([int(h/4*0), int(w/4*2)], [int(h/4*1), int(w/4*4)]),
+            'img_centr':        ([int(h/4*1), int(w/4*2)], [int(h/4*2), int(w/4*4)]),
             'depth':            ([int(h/4*2), int(w/4*2)], [int(h/4*3), int(w/4*3)]),
-            'flow1':            ([int(h/4*2), int(w/4*3)], [int(h/4*3), int(w/4*4)]),
-            'flow2':            ([int(h/4*3), int(w/4*2)], [int(h/4*4), int(w/4*3)]),
+            'flow_peri':        ([int(h/4*2), int(w/4*3)], [int(h/4*3), int(w/4*4)]),
+            'flow_centr':       ([int(h/4*3), int(w/4*2)], [int(h/4*4), int(w/4*3)]),
             'rigid_flow_diff':  ([int(h/4*3), int(w/4*2)], [int(h/4*4), int(w/4*3)]),
             'opt_flow_diff':    ([int(h/4*3), int(w/4*3)], [int(h/4*4), int(w/4*4)]),
 
@@ -401,7 +401,9 @@ class FrameDrawer():
         else:
             h, w, c = self.data["match_side"][...].shape
             self.data["match_side"][...] = np.zeros((h,w,c))
-
+    def draw_img(self,img_centr,img_peri):
+        self.update_data("img_peri", img_peri)
+        self.update_data("img_centr", img_centr)
     def draw_depth(self, vo):
         """Draw depth/disparity map
 
@@ -521,15 +523,15 @@ class FrameDrawer():
                     tracking_mode=vo.tracking_mode
                     )
         
-        # temporal match
-        if vo.cfg.visualization.kp_match.vis_temp.enable and \
-             vo.tracking_stage >= 1:
-                self.draw_match_temp(vo=vo)
+        # # temporal match
+        # if vo.cfg.visualization.kp_match.vis_temp.enable and \
+        #      vo.tracking_stage >= 1:
+        #         self.draw_match_temp(vo=vo)
         
-        # side-by-side match
-        if vo.cfg.visualization.kp_match.vis_side.enable and \
-             vo.tracking_stage >= 1:
-                self.draw_match_side(vo=vo)
+        # # side-by-side match
+        # if vo.cfg.visualization.kp_match.vis_side.enable and \
+        #      vo.tracking_stage >= 1:
+        #         self.draw_match_side(vo=vo)
 
         # Depth
         if vo.cfg.visualization.depth.depth_disp is not None:
@@ -538,15 +540,15 @@ class FrameDrawer():
         # Forward Flow
         if vo.cfg.visualization.flow.vis_forward_flow and \
             vo.tracking_stage >= 1 and \
-                vo.ref_data.get('flow') is not None:
-                    self.draw_flow(vo.ref_data['flow'], 'flow1')
+                vo.ref_data.get('flow_peri') is not None:
+                    self.draw_flow(vo.cur_data['flow_peri'], 'flow_peri')
         
         # Backward Flow
         if vo.cfg.visualization.flow.vis_backward_flow and \
             vo.tracking_stage >= 1 and \
-                vo.cur_data.get('flow') is not None:
-                    self.draw_flow(vo.cur_data['flow'], 'flow2')
-        
+                vo.cur_data.get('flow_centr') is not None:
+                    self.draw_flow(vo.cur_data['flow_centr'], 'flow_centr')
+        self.draw_img(vo.cur_data['img_centr'],vo.cur_data['img_peri'])
         # Forward-backward flow consistency
         if vo.cfg.visualization.flow.vis_flow_diff and \
             vo.cfg.deep_flow.forward_backward and \

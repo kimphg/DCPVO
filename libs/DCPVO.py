@@ -64,7 +64,7 @@ class DCPVO():
         self.initialize_tracker()
 
         # initialize keypoint sampler
-        #self.kp_sampler = KeypointSampler(self.cfg)
+        self.kp_sampler = KeypointSampler(self.cfg)
         
         # Deep networks
         self.deep_models = DeepModel(self.cfg)
@@ -290,8 +290,8 @@ class DCPVO():
         centerx = int(image.shape[1] / 2 - centerw/2)
         centery = int(image.shape[0] / 2 -centerh/2)
         
-        self.cur_data['img_centr'] = image[centery:centery+centerh, centerx:centerx+centerw]
-        self.cur_data['img_peri'] =  cv2.resize(image, dsize=(100, 200), interpolation=cv2.INTER_LINEAR)
+        self.cur_data['img_centr'] = image[ centery:centery+centerh,centerx:centerx+centerw]
+        self.cur_data['img_peri'] =  cv2.resize(image, dsize=(200, 100), interpolation=cv2.INTER_LINEAR)
         # Reading/Predicting depth
         if self.dataset.data_dir['depth_src'] is not None:
             self.cur_data['raw_depth'] = self.dataset.get_depth(self.cur_data['timestamp'])
@@ -376,9 +376,9 @@ class DCPVO():
             self.timers.end('deep_inference')
 
             """ Visual odometry """
-            self.timers.start('tracking')
-            self.tracking()
-            self.timers.end('tracking')
+            # self.timers.start('tracking')
+            # self.tracking()
+            # self.timers.end('tracking')
 
             """ Online Finetuning """
             if self.tracking_stage >= 1 and self.cfg.online_finetune.enable:
