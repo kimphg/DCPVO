@@ -109,7 +109,7 @@ class FrameDrawer():
         self.w = cfg.window_w
         self.img = np.zeros((self.h, self.w, 3), dtype=np.uint8)
         
-        # visualization setting
+        # visualization setting.data[
         self.vis_scale = self.cfg.trajectory.vis_scale
         self.draw_scale = 1
         self.text_y = 0.9 # size ratio on y-direction that start drawing text
@@ -127,18 +127,20 @@ class FrameDrawer():
         w = self.w
 
         # assign data to the layout
+        hu = h/4
+        wu = w/4
         drawer_layout = {
-            'traj':             ([int(h/4*0), int(w/4*0)], [int(h/4*4), int(w/4*2)]),
-            'img_peri':         ([int(h/4*0), int(w/4*2)], [int(h/4*1), int(w/4*4)]),
-            'img_centr':        ([int(h/4*1), int(w/4*2)], [int(h/4*2), int(w/4*4)]),
-            'depth':            ([int(h/4*2), int(w/4*2)], [int(h/4*3), int(w/4*3)]),
-            'flow_peri':        ([int(h/4*2), int(w/4*3)], [int(h/4*3), int(w/4*4)]),
-            'flow_centr':       ([int(h/4*3), int(w/4*2)], [int(h/4*4), int(w/4*3)]),
-            'rigid_flow_diff':  ([int(h/4*3), int(w/4*2)], [int(h/4*4), int(w/4*3)]),
-            'opt_flow_diff':    ([int(h/4*3), int(w/4*3)], [int(h/4*4), int(w/4*4)]),
+            'traj':             ([int(hu*0), int(wu*0)], [int(hu*4), int(wu*2)]),
+            'img_peri':         ([int(hu*0), int(wu*2)], [int(hu*1), int(wu*3)]),
+            'img_centr':        ([int(hu*1), int(wu*2)], [int(hu*2), int(wu*3)]),
+            'depth':            ([int(hu*2), int(wu*2)], [int(hu*3), int(wu*3)]),
+            'flow_peri':        ([int(hu*2), int(wu*3)], [int(hu*3), int(wu*4)]),
+            'flow_centr':       ([int(hu*3), int(wu*2)], [int(hu*4), int(wu*3)]),
+            'rigid_flow_diff':  ([int(hu*3), int(wu*3)], [int(hu*4), int(wu*4)]),
+            'opt_flow_diff':    ([int(hu*3), int(wu*3)], [int(hu*4), int(wu*4)]),
 
             # (Experiement Ver. only)
-            'warp_diff':        ([int(h/4*3), int(w/4*2)], [int(h/4*4), int(w/4*3)]),
+            'warp_diff':        ([int(hu*3), int(wu*2)], [int(hu*4), int(wu*3)]),
         }
 
         for key, locs in drawer_layout.items():
@@ -542,12 +544,14 @@ class FrameDrawer():
             vo.tracking_stage >= 1 and \
                 vo.ref_data.get('flow_peri') is not None:
                     self.draw_flow(vo.cur_data['flow_peri'], 'flow_peri')
+                    self.draw_flow(vo.cur_data['flow_centr'], 'flow_centr')
         
         # Backward Flow
-        if vo.cfg.visualization.flow.vis_backward_flow and \
-            vo.tracking_stage >= 1 and \
-                vo.cur_data.get('flow_centr') is not None:
-                    self.draw_flow(vo.cur_data['flow_centr'], 'flow_centr')
+        # if vo.cfg.visualization.flow.vis_backward_flow and \
+        #     vo.tracking_stage >= 1 and \
+        #         vo.cur_data.get('flow_centr') is not None:
+        #             self.draw_flow(vo.cur_data['flow_centr'], 'flow_centr')
+        #             self.draw_flow(vo.cur_data['flow_peri'], 'flow_peri')
         self.draw_img(vo.cur_data['img_centr'],vo.cur_data['img_peri'])
         # Forward-backward flow consistency
         if vo.cfg.visualization.flow.vis_flow_diff and \
