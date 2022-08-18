@@ -56,7 +56,7 @@ def read_cfgs():
         cfg.no_confirm = True
     else:
         cfg.no_confirm = False
-        continue_flag = input("Save result in {}? [y/n]".format(cfg.directory.result_dir))
+        continue_flag = "y"#input("Save result in {}? [y/n]".format(cfg.directory.result_dir))
         if continue_flag == "y":
             mkdir_if_not_exists(cfg.directory.result_dir)
         else:

@@ -8,6 +8,7 @@ import numpy as np
 import os
 from time import time
 from tqdm import tqdm
+from libs.flowlib.flowlib import flow_to_image
 
 from libs.geometry.camera_modules import SE3
 import libs.datasets as Dataset
@@ -331,10 +332,10 @@ class DCPVO():
                 if self.cfg.deep_flow.forward_backward:
                     self.cur_data['flow_peri'] = flows_peri[(self.cur_data['id'], self.ref_data['id'])].copy()
                     self.ref_data['flow_peri_diff'] = flows_peri[(self.ref_data['id'], self.cur_data['id'], "diff")].copy()
-                    self.cur_data['flow_centr'] = flows_peri[(self.cur_data['id'], self.ref_data['id'])].copy()
-                    self.ref_data['flow_centr_diff'] = flows_peri[(self.ref_data['id'], self.cur_data['id'], "diff")].copy()
+                    self.cur_data['flow_centr'] = flows_centr[(self.cur_data['id'], self.ref_data['id'])].copy()
+                    self.ref_data['flow_centr_diff'] = flows_centr[(self.ref_data['id'], self.cur_data['id'], "diff")].copy()
                 self.timers.end('flow_cnn')
-            
+        
         # Relative camera pose
         if self.tracking_stage >= 1 and self.cfg.deep_pose.enable:
             self.timers.start('pose_cnn', 'deep inference')
@@ -354,7 +355,7 @@ class DCPVO():
         if self.cfg.no_confirm:
             start_frame = 0
         else:
-            start_frame = int(input("Start with frame: "))
+            start_frame = 0#int(input("Start with frame: "))
 
         for img_id in tqdm(range(start_frame, len(self.dataset), self.cfg.frame_step)):
             self.timers.start('DF-VO')
@@ -374,7 +375,11 @@ class DCPVO():
             self.timers.start('deep_inference')
             self.deep_model_inference()
             self.timers.end('deep_inference')
-
+            
+            # if(self.tracking_stage>0):
+            #     vis_flow = self.cur_data['flow_centr'].transpose(1,2,0)
+            #     vis_flow = flow_to_image(vis_flow)
+            #     cv2.imshow('flow_centr', vis_flow)
             """ Visual odometry """
             # self.timers.start('tracking')
             # self.tracking()
