@@ -105,7 +105,7 @@ def local_bestN(kp1, kp2, ref_data, cfg, outputs):
     depth_diff_thre = kp_cfg.depth_consistency.thre
     good_region_cnt = 0
 
-    h, w, _ = ref_data['flow_diff'].shape
+    h, w, _ = ref_data['flow_peri'].shape#h, w, _ = ref_data['flow_diff'].shape
     
     outputs['kp1_best'] = {}
     outputs['kp2_best'] = {}

@@ -345,7 +345,11 @@ class DCPVO():
                         )
             self.ref_data['deep_pose'] = pose # from cur->ref
             self.timers.end('pose_cnn')
-
+    def deepTracking(self):
+        self.cur_data['pose'] = SE3(self.dataset.gt_poses[self.cur_data['id']])
+        pose = self.cur_data['pose']
+        self.update_global_pose(pose, 1)
+    
     def main(self):
         """Main program
         """
@@ -359,7 +363,7 @@ class DCPVO():
 
         for img_id in tqdm(range(start_frame, len(self.dataset), self.cfg.frame_step)):
             self.timers.start('DF-VO')
-            self.tracking_mode = "Ess. Mat."
+            self.tracking_mode = "Deep tracking"
 
             """ Data reading """
             # Initialize ids and timestamps
@@ -375,6 +379,7 @@ class DCPVO():
             self.timers.start('deep_inference')
             self.deep_model_inference()
             self.timers.end('deep_inference')
+
             
             # if(self.tracking_stage>0):
             #     vis_flow = self.cur_data['flow_centr'].transpose(1,2,0)
@@ -384,7 +389,7 @@ class DCPVO():
             # self.timers.start('tracking')
             # self.tracking()
             # self.timers.end('tracking')
-
+            self.deepTracking()
             """ Online Finetuning """
             if self.tracking_stage >= 1 and self.cfg.online_finetune.enable:
                 self.deep_models.finetune(self.ref_data['img_peri'], self.cur_data['img_peri'],
@@ -422,10 +427,8 @@ class DCPVO():
         # Save trajectory txt
         traj_txt = "{}/{}.txt".format(self.cfg.directory.result_dir, self.cfg.seq)
         self.dataset.save_result_traj(traj_txt, self.global_poses)
-
         # save finetuned model
         if self.cfg.online_finetune.enable and self.cfg.online_finetune.save_model:
             self.deep_models.save_model()
-
         # Output experiement information
         self.timers.time_analysis()

@@ -100,7 +100,7 @@ class KeypointSampler():
 
         kp1 = image_grid(h, w)
         kp1 = np.expand_dims(kp1, 0)
-        tmp_flow_data = np.transpose(np.expand_dims(ref_data['flow'], 0), (0, 2, 3, 1))
+        tmp_flow_data = np.transpose(np.expand_dims(ref_data['flow_peri'], 0), (0, 2, 3, 1))#tmp_flow_data = np.transpose(np.expand_dims(ref_data['flow'], 0), (0, 2, 3, 1))
         kp2 = kp1 + tmp_flow_data
 
         """ best-N selection """

@@ -14,7 +14,7 @@ image:
     height_centr: 100
     width_centr: 200
     ext: png                                              # image file extension for data loading
-seq: "09"                                                 # sequence to run
+seq: "10"                                                 # sequence to run
 frame_step: 1                                             # frame step
 cam_mode: mono                                            # camera mode: [mono, stereo]
 

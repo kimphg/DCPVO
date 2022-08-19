@@ -38,7 +38,6 @@ def read_cfgs():
     parser.add_argument("--no_confirm", action="store_true",
                         help="no confirmation questions")
     args = parser.parse_args()
-
     ''' Read configuration '''
     # read default and custom config, merge cfgs
     config_files = [args.default_configuration, args.configuration]
@@ -63,11 +62,9 @@ def read_cfgs():
             exit()
     return args, cfg
 
-
 if __name__ == '__main__':
     # Read config
     args, cfg = read_cfgs()
-
     # Set random seed
     SEED = cfg.seed
     np.random.seed(SEED)
@@ -77,7 +74,6 @@ if __name__ == '__main__':
     # setup DFVO
     vo = DCPVO(cfg)
     vo.main()
-
     # Save configuration file
     cfg_path = os.path.join(cfg.directory.result_dir, 'configuration_{}.yml'.format(cfg.seq))
     config_loader.save_cfg([args.default_configuration, args.configuration], file_path=cfg_path)

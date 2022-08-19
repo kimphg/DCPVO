@@ -130,9 +130,9 @@ class FrameDrawer():
         hu = h/4
         wu = w/4
         drawer_layout = {
-            'traj':             ([int(hu*0), int(wu*0)], [int(hu*4), int(wu*2)]),
-            'img_peri':         ([int(hu*0), int(wu*2)], [int(hu*1), int(wu*3)]),
-            'img_centr':        ([int(hu*1), int(wu*2)], [int(hu*2), int(wu*3)]),
+            'traj':             ([int(hu*0), int(wu*0)], [int(hu*2), int(wu*2)]),
+            'img_centr':        ([int(hu*2), int(wu*0)], [int(hu*4), int(wu*2)]),
+            'img_peri':         ([int(hu*0), int(wu*2)], [int(hu*2), int(wu*4)]),
             'depth':            ([int(hu*2), int(wu*2)], [int(hu*3), int(wu*3)]),
             'flow_peri':        ([int(hu*2), int(wu*3)], [int(hu*3), int(wu*4)]),
             'flow_centr':       ([int(hu*3), int(wu*2)], [int(hu*4), int(wu*3)]),

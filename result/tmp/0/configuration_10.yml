@@ -2,9 +2,13 @@
 dataset: kitti_odom                                                                                  # |  
 seed: 4869                                                                                           # |  
 image:                                                                                               # | 
-  height: 192                                                                                        # |  
-  width: 640                                                                                         # |  
-  ext: jpg                                                                                           # |  
+  height: 300                                                                                        # |  
+  width: 1000                                                                                        # |  
+  height_peri: 100                                                                                   # |  
+  width_peri: 200                                                                                    # |  
+  height_centr: 100                                                                                  # |  
+  width_centr: 200                                                                                   # |  
+  ext: png                                                                                           # |  
 seq: 10                                                                                              # |  
 frame_step: 1                                                                                        # |  
 cam_mode: mono                                                                                       # |  
