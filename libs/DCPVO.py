@@ -402,7 +402,7 @@ class DCPVO():
                 self.timers.start('visualization')
                 self.drawer.main(self)
                 self.timers.end('visualization')
-
+            
             """ Update reference and current data """
             self.ref_data, self.cur_data = self.update_data(
                                     self.ref_data,

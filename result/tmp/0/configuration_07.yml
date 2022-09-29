@@ -1,0 +1,153 @@
+# -------------------- Setup --------------------------------------------------------------------------|---------- Default --------------------
+dataset: kitti_odom                                                                                  # |  
+seed: 4869                                                                                           # |  
+image:                                                                                               # | 
+  height: 300                                                                                        # |  
+  width: 1000                                                                                        # |  
+  height_peri: 100                                                                                   # |  
+  width_peri: 200                                                                                    # |  
+  height_centr: 100                                                                                  # |  
+  width_centr: 200                                                                                   # |  
+  ext: png                                                                                           # |  
+seq: 07                                                                                              # |  
+frame_step: 1                                                                                        # |  
+cam_mode: mono                                                                                       # |  
+directory:                                                                                           # | 
+  result_dir: result/tmp/0/                                                                          # |  
+  img_seq_dir: D:/dataset/kitti_odom/sequences/                                                      # |  
+  gt_pose_dir: dataset/kitti_odom/gt_poses/                                                          # |  
+  depth_dir:                                                                                         # |  
+depth:                                                                                               # | 
+  depth_src:                                                                                         # |  
+  deep_depth:                                                                                        # | 
+    network: monodepth2                                                                              # |  
+    pretrained_model: model_zoo/depth/kitti_odom/stereo/                                             # |  
+  max_depth: 50                                                                                      # |  
+  min_depth: 0                                                                                       # |  
+deep_flow:                                                                                           # | 
+  network: liteflow                                                                                  # |  
+  flow_net_weight: model_zoo/optical_flow/LiteFlowNet/network-default.pytorch                        # |  
+  forward_backward: True                                                                             # |  
+deep_pose:                                                                                           # | 
+  enable: False                                                                                      # |  
+  pretrained_model: MODEL_DIR                                                                        # |  
+stereo:                                                                                              # | 
+  enable: False                                                                                      # |  
+  disp_thre: 0.1                                                                                     # |  
+  deep_stereo:                                                                                       # | 
+    network: hd3                                                                                     # |  
+    pretrained_model: model_zoo/stereo/hd3/hd3s_things_kitti-1243813e.pth                            # |  
+    forward_backward: True                                                                           # |  
+online_finetune:                                                                                     # | 
+  enable: False                                                                                      # |  
+  save_model: False                                                                                  # |  
+  lr: 1e-05                                                                                          # |  
+  num_frames: 200                                                                                    # |  
+  flow:                                                                                              # | 
+    enable: True                                                                                     # |  
+    scales: [1, 2, 3, 4, 5]                                                                          # |  
+    loss:                                                                                            # | 
+      flow_consistency: 0.005                                                                        # |  
+      flow_smoothness: 0.1                                                                           # |  
+  depth:                                                                                             # | 
+    enable: False                                                                                    # |  
+    scales: [0, 1, 2, 3]                                                                             # |  
+    pose_src: DF-VO                                                                                  # |  
+    loss:                                                                                            # | 
+      apperance_loss: 1                                                                              # |  
+      disparity_smoothness: 0.001                                                                    # |  
+      depth_consistency: 0.001                                                                       # |  
+  pose:                                                                                              # | 
+    enable: False                                                                                    # |  
+  stereo:                                                                                            # | 
+    enable: False                                                                                    # |  
+crop:                                                                                                # | 
+  depth_crop: [[0.3, 1], [0, 1]]                                                                     # |  
+  flow_crop: [[0, 1], [0, 1]]                                                                        # |  
+kp_selection:                                                                                        # | 
+  local_bestN:                                                                                       # | 
+    enable: True                                                                                     # |  
+    num_bestN: 2000                                                                                  # |  
+    num_row: 10                                                                                      # |  
+    num_col: 10                                                                                      # |  
+    score_method: flow                                                                               # |  
+    thre: 0.1                                                                                        # |  
+  bestN:                                                                                             # | 
+    enable: False                                                                                    # |  
+    num_bestN: 2000                                                                                  # |  
+  sampled_kp:                                                                                        # | 
+    enable: False                                                                                    # |  
+    num_kp: 2000                                                                                     # |  
+  rigid_flow_kp:                                                                                     # | 
+    enable: False                                                                                    # |  
+    num_bestN: 2000                                                                                  # |  
+    num_row: 10                                                                                      # |  
+    num_col: 10                                                                                      # |  
+    score_method: opt_flow                                                                           # |  
+    rigid_flow_thre: 5                                                                               # |  
+    optical_flow_thre: 0.1                                                                           # |  
+  depth_consistency:                                                                                 # | 
+    enable: False                                                                                    # |  
+    thre: 0.05                                                                                       # |  
+tracking_method: hybrid                                                                              # |  
+e_tracker:                                                                                           # | 
+  ransac:                                                                                            # | 
+    reproj_thre: 0.2                                                                                 # |  
+    repeat: 5                                                                                        # |  
+  validity:                                                                                          # | 
+    method: GRIC                                                                                     # |  
+    thre:                                                                                            # |  
+  kp_src: kp_best                                                                                    # |  
+  iterative_kp:                                                                                      # | 
+    enable: False                                                                                    # |  
+    kp_src: kp_depth                                                                                 # |  
+    score_method: opt_flow                                                                           # |  
+scale_recovery:                                                                                      # | 
+  method: simple                                                                                     # |  
+  ransac:                                                                                            # | 
+    method: depth_ratio                                                                              # |  
+    min_samples: 3                                                                                   # |  
+    max_trials: 100                                                                                  # |  
+    stop_prob: 0.99                                                                                  # |  
+    thre: 0.1                                                                                        # |  
+  kp_src: kp_best                                                                                    # |  
+  iterative_kp:                                                                                      # | 
+    enable: False                                                                                    # |  
+    kp_src: kp_depth                                                                                 # |  
+    score_method: rigid_flow                                                                         # |  
+pnp_tracker:                                                                                         # | 
+  ransac:                                                                                            # | 
+    iter: 100                                                                                        # |  
+    reproj_thre: 1                                                                                   # |  
+    repeat: 5                                                                                        # |  
+  kp_src: kp_best                                                                                    # |  
+  iterative_kp:                                                                                      # | 
+    enable: False                                                                                    # |  
+    kp_src: kp_depth                                                                                 # |  
+    score_method: rigid_flow                                                                         # |  
+visualization:                                                                                       # | 
+  enable: True                                                                                       # |  
+  save_img: True                                                                                     # |  
+  window_h: 600                                                                                      # |  
+  window_w: 1000                                                                                     # |  
+  kp_src: kp_best                                                                                    # |  
+  flow:                                                                                              # | 
+    vis_forward_flow: True                                                                           # |  
+    vis_backward_flow: True                                                                          # |  
+    vis_flow_diff: True                                                                              # |  
+    vis_rigid_diff: True                                                                             # |  
+  kp_match:                                                                                          # | 
+    kp_num: 100                                                                                      # |  
+    vis_temp:                                                                                        # | 
+      enable: True                                                                                   # |  
+    vis_side:                                                                                        # | 
+      enable: True                                                                                   # |  
+      inlier_plot: False                                                                             # |  
+  trajectory:                                                                                        # | 
+    vis_traj: True                                                                                   # |  
+    vis_gt_traj: True                                                                                # |  
+    mono_scale: 1                                                                                    # |  
+    vis_scale: 1                                                                                     # |  
+  depth:                                                                                             # | 
+    use_tracking_depth: False                                                                        # |  
+    depth_disp: disp                                                                                 # |  
