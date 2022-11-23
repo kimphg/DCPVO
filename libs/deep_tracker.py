@@ -45,7 +45,7 @@ class DeepTrackerVO():
         self.optimizer = Adam(self.model.parameters(), lr=0.001, weight_decay=0.0001)
 
     def saveModel(self):
-        path = "./myFirstModel.pth"
+        path = "./trackerModel.pth"
         torch.save(self.model.state_dict(), path)
     def testAccuracy(self):
         self.model.eval()
