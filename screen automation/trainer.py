@@ -129,11 +129,11 @@ while True:
                     # print(res[y_points,x_points],x,y)
                     
                     detected_sample = sct_img_crop[ (y+20):(y+95),(x+15):(x+90)]
-                    res = cv2.matchTemplate(detected_sample,tp_black_rect,method)
-                    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-                    if (max_val>0.9):
-                        continue
-                    sct_img_crop = cv2.rectangle(sct_img_crop, (x+10, y+15), (x+95, y+100), (255, 255, 255), -1)
+                    # res = cv2.matchTemplate(detected_sample,tp_black_rect,method)
+                    # min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+                    # if (max_val>0.9):
+                        # continue
+                    # sct_img_crop = cv2.rectangle(sct_img_crop, (x+10, y+15), (x+95, y+100), (255, 255, 255), -1)
                     sample_exist = False
                     for sample_img in class_samples:
                         res = cv2.matchTemplate(detected_sample,sample_img,method)
