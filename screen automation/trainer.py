@@ -146,6 +146,8 @@ while True:
                         cv2.imwrite(class_path+"s_"+str(len(class_samples))+'.png',detected_sample)
                         class_samples.append(detected_sample)
                         print("add sample to class:",cur_class)
+                for (x, y) in zip(x_points, y_points):
+                    sct_img_crop = cv2.rectangle(sct_img_crop, (x, y), (x+100, y+110), (255, 255, 255), -1)
                 #find remembered sample
                 for sample_img in class_samples:
                     res = cv2.matchTemplate(sct_img_crop,sample_img,method)
