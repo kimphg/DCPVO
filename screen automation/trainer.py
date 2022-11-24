@@ -33,7 +33,7 @@ for x in os.listdir(cur_dir):
             header_mask_list.append(header_mask)
             print(x.split('_')[1].split('.')[0])
 
-boundaries_cyan = 	([135, 125, 0], [150, 137, 10])
+boundaries_cyan = 	([140, 130, 0], [146, 133, 3])
 bounding_box = {'top': 0, 'left': 0, 'width': 500, 'height': 900}
 tp_bt_human =  cv2.imread('D:/button_human.png',cv2.IMREAD_COLOR)
 # tp_bt_human = cv2.cvtColor(tp_bt_human,cv2.COLOR_GRAY2RGB)
