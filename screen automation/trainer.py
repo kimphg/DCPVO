@@ -54,6 +54,9 @@ class_frame_count=0
 class_samples=[]
 cropw = 315
 croph = 415
+lower, upper = boundaries_cyan
+lower = np.array(lower, dtype = "uint8")
+upper = np.array(upper, dtype = "uint8")
 tp_black_rect = cv2.imread('D:/black.png',cv2.IMREAD_COLOR)
 while True:
     sct_img = np.asarray(sct.grab(bounding_box))
@@ -75,9 +78,7 @@ while True:
         
         #cv2.imshow("sct_img_crop",sct_img_crop)
         #find selected corner
-        lower, upper = boundaries_cyan
-        lower = np.array(lower, dtype = "uint8")
-        upper = np.array(upper, dtype = "uint8")
+        
         mask = cv2.inRange(sct_img_crop, lower, upper)
         
         #find header class
@@ -122,6 +123,7 @@ while True:
             if(class_frame_count>5):
                 # find  news selection
                 res = cv2.matchTemplate(mask,tp_label_rect,method)
+                cv2.imshow("res",res)
                 (y_points, x_points) = np.where(res >= 0.85)
                 #  check if sample exists in class_samples
                 k=0
@@ -149,16 +151,15 @@ while True:
                 for (x, y) in zip(x_points, y_points):
                     sct_img_crop = cv2.rectangle(sct_img_crop, (x, y), (x+100, y+110), (255, 255, 255), -1)
                 #find remembered sample
+                ks=0
                 for sample_img in class_samples:
+                    ks+=1
                     res = cv2.matchTemplate(sct_img_crop,sample_img,method)
                     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
                     if (max_val>0.9):
                         (x, y) = max_loc
                         sct_img_crop = cv2.rectangle(sct_img_crop, (x+10, y+15), (x+95, y+100), (0, 0, 255), 1)
-                        cv2.imshow('sample', sample_img)
-
-                    
-                    
+                        cv2.imshow('sample'+str(ks), sample_img)
             # min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
             # if(max_val>0.75):
             #     center_coordinates = (max_loc[0]+30, max_loc[1]+30)
