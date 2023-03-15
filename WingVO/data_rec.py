@@ -7,7 +7,7 @@ now = datetime.now() # current date and time
 # Create a VideoCapture object and read from input file
 # If the input is the camera, pass 0 instead of the video file name
 cap0 = cv2.VideoCapture(1)
-cap1 = cv2.VideoCapture(2)
+cap1 = cv2.VideoCapture(0)
 # Check if camera opened successfully
 if (cap0.isOpened()== False): 
   print("Error stream 0")
@@ -16,13 +16,13 @@ if (cap1.isOpened()== False):
 frame_width = int(cap0.get(3))
 frame_height = int(cap0.get(4))
 size = (frame_width, frame_height)
-result0 = cv2.VideoWriter("D:\\"+now.strftime("%m/%d/%Y, %H:%M:%S")+'v0.avi', 
+result0 = cv2.VideoWriter(now.strftime("%m_%d_%Y_ %H_%M_%S")+'_c0.avi', 
                          cv2.VideoWriter_fourcc(*'MJPG'),
                          10, size)
-result1 = cv2.VideoWriter("D:\\"+now.strftime("%m/%d/%Y, %H:%M:%S")+'v1.avi', 
+result1 = cv2.VideoWriter(now.strftime("%m_%d_%Y_ %H_%M_%S")+'_c1.avi', 
                          cv2.VideoWriter_fourcc(*'MJPG'),
                          10, size)
-
+print(now.strftime("%m/%d/%Y, %H:%M:%S")+'v1.avi')
 # Read until video is completed
 while(cap0.isOpened() & cap1.isOpened()):
   # Capture frame-by-frame
